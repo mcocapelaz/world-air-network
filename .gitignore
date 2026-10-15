@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.cache.json
+.DS_Store
+_render.html
