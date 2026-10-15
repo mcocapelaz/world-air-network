@@ -11,7 +11,7 @@ One self-contained file, no server, no internet.
 import json
 import os
 
-from vuln_core import BACKGROUND as BG, compute, fragility_colour
+from vuln_core import PAGE, compute, fragility_colour
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,7 +33,7 @@ html = f"""<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Un pa&iacute;s, un aeropuerto</title>
 <style>
-  :root {{ --bg:{BG}; --panel:#111c2f; --line:#1e293b; --ink:#e2e8f0; --mut:#94a3b8; }}
+  :root {{ --bg:{PAGE}; --panel:#111c2f; --line:#1e293b; --ink:#e2e8f0; --mut:#94a3b8; }}
   * {{ box-sizing:border-box; }}
   body {{ margin:0; background:var(--bg); color:var(--ink); padding:28px 30px 70px;
          font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }}

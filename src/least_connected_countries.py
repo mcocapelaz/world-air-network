@@ -13,7 +13,7 @@ import json
 import os
 from collections import defaultdict
 
-from vuln_core import (BACKGROUND as BG, LAND, LAND_STROKE as STROKE, MUTED_AIRPORT,
+from vuln_core import (LAND, LAND_STROKE as STROKE, MUTED_AIRPORT, PAGE, SEA,
                         compute, land_paths, project)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -85,7 +85,7 @@ html = f"""<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Qui&eacute;n queda fuera &middot; los pa&iacute;ses menos conectados</title>
 <style>
-  :root {{ --bg:{BG}; --panel:#111c2f; --line:#1e293b; --ink:#e2e8f0; --mut:#94a3b8; }}
+  :root {{ --bg:{PAGE}; --panel:#111c2f; --line:#1e293b; --ink:#e2e8f0; --mut:#94a3b8; }}
   * {{ box-sizing:border-box; }}
   body {{ margin:0; background:var(--bg); color:var(--ink); padding:28px 30px 70px;
          font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }}
@@ -109,9 +109,9 @@ html = f"""<!doctype html>
   .d {{ opacity:.55; }}
   .d.hi {{ fill:#f97316; opacity:1; }}
   .lb {{ font:9.5px -apple-system,sans-serif; fill:#64748b; text-anchor:middle;
-         paint-order:stroke; stroke:{BG}; stroke-width:2.6px; stroke-linejoin:round; }}
+         paint-order:stroke; stroke:{SEA}; stroke-width:2.6px; stroke-linejoin:round; }}
   .lb.hi {{ fill:#fed7aa; font-weight:600; }}
-  .lg {{ position:absolute; left:14px; top:14px; background:{BG}dd; border:1px solid var(--line);
+  .lg {{ position:absolute; left:14px; top:14px; background:#0b1220dd; border:1px solid var(--line);
          border-radius:8px; padding:9px 12px; font-size:12px; }}
   .lg i {{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px;
            vertical-align:-1px; }}
@@ -154,7 +154,7 @@ pertenecen a los pa&iacute;ses destacados.</p>
 <div class="grid">
   <div class="mapwrap">
     <svg viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="{W}" height="{H}" fill="{BG}"></rect>
+      <rect width="{W}" height="{H}" fill="{SEA}"></rect>
       <g class="land">{''.join(f'<path d="{d}"/>' for d in shapes)}</g>
       <g id="dots">{''.join(dots)}</g>
       <g id="labels">{''.join(labels)}</g>

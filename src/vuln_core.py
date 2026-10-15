@@ -16,6 +16,7 @@ import hmac
 import io
 import json
 import os
+import sys
 import urllib.parse
 import urllib.request
 from collections import defaultdict, deque
@@ -43,10 +44,30 @@ TOP_HUBS = 10
 # the sea is near-black and the landmass is a desaturated slate, well short of
 # competing with any dot. The land stroke is a shade lighter than the fill so
 # coastlines still read as shapes.
-BACKGROUND = "0b1220"
-LAND = "#EFA4A494"
-LAND_STROKE = "#566584"
-FRAGILITY_BANDS = [(0, "#ef4444"), (20, "#fb923c"), (40, "#facc15"), (60, "#1c95d2"), (80, "#5a11e2")]
+# The page around the map, the sea inside it, and the landmass are three
+# separate things: the page keeps a dark navy so the text reads, the sea is
+# pure black so the dots float on it, and the land is a coral wash that stays
+# behind the data instead of competing with it.
+PAGE = "#0b1220"          # the frame the whole page sits on
+SEA = "#000000"           # inside the map only
+LAND = "#EFA4A447"        # coral at 28%: a hint of land, with the dots floating on top
+LAND_STROKE = "#566584"   # a shade lighter than the fill, so coasts read as shapes
+
+# Cool means safe, warm means fragile: the scale reads without relying on a
+# red-green distinction, and the first version's dark blue vanished against the
+# land, so the low end is deliberately bright.
+# The cuts follow the data, not round numbers: 99% of the airports score
+# between 0 and 40, so cuts at 0/20/40/60/80 left half the world in one band and
+# three bands empty. These six spread it across the range the scores actually
+# occupy, and the last one is for the handful that score above 60.
+FRAGILITY_BANDS = [
+    (0, "#38bdf8"),    # safest
+    (12, "#22d3ee"),
+    (24, "#facc15"),
+    (36, "#fb923c"),
+    (50, "#ef4444"),
+    (60, "#7c3aed"),   # the few that score above 60
+]
 MUTED_AIRPORT = "#50484A"  # every airport not in the selected set
 
 
@@ -98,9 +119,33 @@ def get(key: str) -> str:
 
 
 def load():
-    airports = list(csv.DictReader(io.StringIO(get("geo/airports.csv"))))
-    routes = list(csv.DictReader(io.StringIO(get("geo/routes.csv"))))
-    return airports, routes
+    """The two OpenFlights CSVs.
+
+    Reads them out of keasy's S3 store when the stack is up, and falls back to
+    the copies in `data/` when it is not — so changing a colour does not require
+    starting Docker. The two paths are the same bytes: `data/` is a copy of the
+    `make seed` output. Set KEASY_S3=off to force the local copy.
+    """
+    if os.environ.get("KEASY_S3", "on").lower() == "off":
+        return _load_local()
+    try:
+        return (
+            list(csv.DictReader(io.StringIO(get("geo/airports.csv")))),
+            list(csv.DictReader(io.StringIO(get("geo/routes.csv")))),
+        )
+    except OSError as error:
+        print(f"S3 no disponible ({error}); uso la copia local en data/", file=sys.stderr)
+        return _load_local()
+
+
+def _load_local():
+    folder = os.path.join(HERE, "data")
+
+    def read(name):
+        with open(os.path.join(folder, name), encoding="utf-8") as handle:
+            return list(csv.DictReader(handle))
+
+    return read("airports.csv"), read("routes.csv")
 
 
 def build_graph(airports, routes):
@@ -172,13 +217,15 @@ def held_if_removed(v, neighbours):
 
 
 def hops_to_hubs(nodes, neighbours):
-    """Distance to the nearest of the ten most central airports."""
-    betweenness = {}
-    if os.path.exists(BETWEENNESS_CACHE):
-        betweenness = json.load(open(BETWEENNESS_CACHE)).get("betweenness", {})
-    if not betweenness:
-        return {v: None for v in nodes}, []
-    hubs = sorted(nodes, key=lambda v: -betweenness.get(v, 0.0))[:TOP_HUBS]
+    """Distance to the nearest of the ten busiest airports.
+
+    The hubs are the ten highest-degree airports. An earlier version took them
+    from the betweenness cache, which made the score depend on a file that is
+    not in the repository: with the cache absent every airport got `None` and
+    the remoteness factor silently contributed zero to all of them. Taking the
+    hubs from the degree keeps the score reproducible from the CSVs alone.
+    """
+    hubs = sorted(nodes, key=lambda v: (-len(neighbours[v]), v))[:TOP_HUBS]
     hops, seen = {h: 0 for h in hubs}, set(hubs)
     frontier = deque(hubs)
     while frontier:

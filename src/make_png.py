@@ -15,7 +15,7 @@ import subprocess
 import sys
 from collections import defaultdict
 
-from vuln_core import (BACKGROUND as BG, LAND, LAND_STROKE as STROKE, MUTED_AIRPORT,
+from vuln_core import (LAND, LAND_STROKE as STROKE, MUTED_AIRPORT, PAGE, SEA,
                         compute, land_paths, load, project)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -106,14 +106,14 @@ html = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <style>
   * {{ box-sizing:border-box; margin:0; }}
-  body {{ width:1880px; background:{BG}; color:#e2e8f0; padding:34px 38px 26px;
+  body {{ width:1880px; background:var(--bg); color:#e2e8f0; padding:34px 38px 26px;
          font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif; }}
   h1 {{ font-size:33px; font-weight:650; letter-spacing:-.5px; }}
   .sub {{ color:#94a3b8; font-size:15.5px; margin-top:5px; max-width:1100px; }}
   .cols {{ display:grid; grid-template-columns:1fr 470px; gap:26px; margin-top:20px; }}
   .land {{ fill:{LAND}; stroke:{STROKE}; stroke-width:.5; }}
   .lb {{ font:10.5px -apple-system,sans-serif; fill:#fcd9b6; text-anchor:middle;
-         paint-order:stroke; stroke:{BG}; stroke-width:3px; stroke-linejoin:round; }}
+         paint-order:stroke; stroke:{SEA}; stroke-width:3px; stroke-linejoin:round; }}
   .lg {{ display:flex; gap:18px; margin-top:8px; font-size:12.5px; color:#94a3b8; }}
   .lg i {{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px;
            vertical-align:0; }}
@@ -143,7 +143,7 @@ the highlighted countries.</p>
 <div class="cols">
   <div>
     <svg viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
-      <rect width="{W}" height="{H}" fill="{BG}"/>
+      <rect width="{W}" height="{H}" fill="{SEA}"/>
       <g class="land">{''.join(f'<path d="{d}"/>' for d in shapes)}</g>
       <g>{''.join(dots)}</g>
       <g>{''.join(labels)}</g>
