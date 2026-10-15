@@ -44,10 +44,10 @@ TOP_HUBS = 10
 # competing with any dot. The land stroke is a shade lighter than the fill so
 # coastlines still read as shapes.
 BACKGROUND = "0b1220"
-LAND = "#F08080"
-LAND_STROKE = "#33415c"
-FRAGILITY_BANDS = [(0, "#38bdf8"), (20, "#22d3ee"), (40, "#facc15"), (60, "#fb923c"), (80, "#ef4444")]
-MUTED_AIRPORT = "#5b7ba6"  # every airport not in the selected set
+LAND = "#EFA4A494"
+LAND_STROKE = "#566584"
+FRAGILITY_BANDS = [(0, "#ef4444"), (20, "#fb923c"), (40, "#facc15"), (60, "#1c95d2"), (80, "#5a11e2")]
+MUTED_AIRPORT = "#50484A"  # every airport not in the selected set
 
 
 def fragility_colour(score):
