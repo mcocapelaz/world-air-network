@@ -48,9 +48,12 @@ TOP_HUBS = 10
 # separate things: the page keeps a dark navy so the text reads, the sea is
 # pure black so the dots float on it, and the land is a coral wash that stays
 # behind the data instead of competing with it.
-PAGE = "#0b1220"          # the frame the whole page sits on
-SEA = "#000000"           # inside the map only
-LAND = "#EFA4A447"        # coral at 28%: a hint of land, with the dots floating on top
+PAGE = "#0b1220"          # the frame the whole page sits on, darker than the sea
+SEA = "#2f3646"           # slate grey inside the map: it frames the map against the
+                         # navy page, and it is light enough that the dark rim on every
+                         # dot reads as a circle rather than vanishing into the sea
+LAND = "#EFA4A461"        # coral at 38%: solid enough that the continents read as
+                         # landmass, still far enough back for the dots to carry the data
 LAND_STROKE = "#566584"   # a shade lighter than the fill, so coasts read as shapes
 
 # Cool means safe, warm means fragile: the scale reads without relying on a
@@ -61,12 +64,12 @@ LAND_STROKE = "#566584"   # a shade lighter than the fill, so coasts read as sha
 # three bands empty. These six spread it across the range the scores actually
 # occupy, and the last one is for the handful that score above 60.
 FRAGILITY_BANDS = [
-    (0, "#38bdf8"),    # safest
-    (12, "#22d3ee"),
-    (24, "#facc15"),
-    (36, "#fb923c"),
-    (50, "#ef4444"),
-    (60, "#7c3aed"),   # the few that score above 60
+    (0, "#00b0ff"),    # safest
+    (12, "#00d2c6"),
+    (24, "#ffd000"),
+    (36, "#ff8a00"),
+    (50, "#ff2f2f"),
+    (60, "#b026ff"),   # the few that score above 60
 ]
 MUTED_AIRPORT = "#50484A"  # every airport not in the selected set
 
